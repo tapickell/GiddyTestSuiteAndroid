@@ -1,16 +1,23 @@
 package me.toddpickell.giddygoat.test;
 
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.jayway.android.robotium.solo.Solo;
+
 import me.toddpickell.giddygoat.MainActivity;
+import android.app.Instrumentation;
 import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.TouchUtils;
 import android.test.ViewAsserts;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+
+
 public class MainActivityTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
+
+	 
 
 	private static final String CARD_FILENAME = "punch_card";
 	private static final int MODE_PRIVATE = 0;
@@ -21,6 +28,8 @@ public class MainActivityTest extends
 	private TextView mTextMarque;
 	private String punchesFromCard;
 	private View customAlertView;
+	private Instrumentation mInstrumentation;
+	private Solo mSolo;
 
 	@SuppressWarnings("deprecation")
 	public MainActivityTest() {
@@ -38,6 +47,8 @@ public class MainActivityTest extends
 		
 		setActivityInitialTouchMode(false);
 		mActivity = getActivity();
+		mInstrumentation = getInstrumentation();
+		mSolo = new Solo(mInstrumentation, mActivity);
 		
 		mTextMarque = (TextView) mActivity.findViewById(me.toddpickell.giddygoat.R.id.mytextview);
 		mPunchCount = (TextView) mActivity.findViewById(me.toddpickell.giddygoat.R.id.textView1);
@@ -50,7 +61,8 @@ public class MainActivityTest extends
 		
 	}
 	
-//	@Test
+
+	//	@Test
 	public void testPreConditions() throws Exception {
 		assertNotNull(getActivity());
 		assertNotNull(mButton);
@@ -71,16 +83,34 @@ public class MainActivityTest extends
 		assertEquals(punchesFromCard, mPunchCount.getText()); 
 	}
 	
-//	@Test
-	public void testPunchButtonLaunchesZBarScanner() throws Exception {
-		TouchUtils.tapView(this, mButton);
-		//assert scanner launches
-		//assert that with 10 punches the popup launches
-		if (punchCard.getInt("punches", 50) == 10) {
-			ViewAsserts.assertOnScreen(customAlertView.getRootView(), customAlertView);
-		} 
+//	@Test   /* this should be functional "user story" test  */
+	public void test10thPunchLaunches10thPunchWarningOnPress() throws Exception {
+		int temp = punchCard.getInt("punches", 50);
+		SharedPreferences.Editor editor = punchCard.edit();
+		editor.putInt("punches", 10);
+		editor.commit();
+
+
+		mSolo.clickOnView(mButton);
 		
+		if (punchCard.getInt("punches", 50) == 10) {
+
+			assertTrue(mSolo.searchText("Congrats on filling the punches"));
+			mSolo.clickOnButton("Cancel");
+		}
+		
+		editor.putInt("punches", temp);
+		editor.commit();
 	}
+	
+//	@Test    /* this should be functional "user story" test  */
+	public void testThatPunchButtonLaunchesZBarScannerActivity() throws Exception {
+		mSolo.clickOnView(mButton);
+		mSolo.clickOnButton("Continue");
+		mSolo.assertCurrentActivity("expected ZBarScannerActivity", ZBarScannerActivity.class);
+		mSolo.goBack();
+	}
+	
 }
 
 
