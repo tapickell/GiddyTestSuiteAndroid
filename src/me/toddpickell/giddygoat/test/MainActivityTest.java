@@ -3,6 +3,7 @@ package me.toddpickell.giddygoat.test;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.jayway.android.robotium.solo.Solo;
 
+import me.toddpickell.giddygoat.DrinksMenu;
 import me.toddpickell.giddygoat.MainActivity;
 import android.app.Instrumentation;
 import android.content.SharedPreferences;
@@ -90,9 +91,7 @@ public class MainActivityTest extends
 		editor.putInt("punches", 10);
 		editor.commit();
 
-
-		mSolo.clickOnView(mButton);
-		
+		mSolo.clickOnView(mButton);	
 		if (punchCard.getInt("punches", 50) == 10) {
 
 			assertTrue(mSolo.searchText("Congrats on filling the punches"));
@@ -108,6 +107,34 @@ public class MainActivityTest extends
 		mSolo.clickOnView(mButton);
 		mSolo.clickOnButton("Continue");
 		mSolo.assertCurrentActivity("expected ZBarScannerActivity", ZBarScannerActivity.class);
+		mSolo.goBack();
+	}
+	
+//	@Test   /* this should be functional "user story" test  */
+	public void testThatDrinksSelectionFromMenuLaunchesDrinksMenuActivity() throws Exception {
+		mSolo.clickOnMenuItem("Drinks");
+		mSolo.assertCurrentActivity("expected DrinksMenuActivity", DrinksMenu.class);
+		mSolo.goBack();
+	}
+	
+//	@Test   /* this should be functional "user story" test  */
+	public void testThatPhoneSelectionFromMenuDisplaysCallingDialog() throws Exception {
+		mSolo.clickOnMenuItem("Phone");
+		assertTrue(mSolo.searchText("Calling 573-426-6750"));
+		mSolo.goBack();
+	}
+	
+//	@Test   /* this should be functional "user story" test  */
+	public void testThatCreditsSelectionFromMenuDisplaysCreditsDialog() throws Exception {
+		mSolo.clickOnMenuItem("Credits");
+		assertTrue(mSolo.searchText("Developer: Todd Pickell"));
+		mSolo.goBack();
+	}
+	
+//	@Test   /* this should be functional "user story" test  */
+	public void testThatMapSelectionFromMenuLaunchesGoogleMaps() throws Exception {
+		mSolo.clickOnMenuItem("Map");
+		mSolo.assertCurrentActivity("expected Google Map", MainActivity.class);
 		mSolo.goBack();
 	}
 	
