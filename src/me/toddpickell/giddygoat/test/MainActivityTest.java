@@ -1,8 +1,10 @@
 package me.toddpickell.giddygoat.test;
 
+import java.util.List;
+
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.jayway.android.robotium.solo.Solo;
-
+import static org.mockito.Mockito.*;
 import me.toddpickell.giddygoat.DrinksMenu;
 import me.toddpickell.giddygoat.MainActivity;
 import android.app.Instrumentation;
@@ -59,6 +61,7 @@ public class MainActivityTest extends
 		punchesFromCard = Integer.toString(punchCard.getInt("punches", 50));
 		
 		customAlertView = (View) mActivity.findViewById(me.toddpickell.giddygoat.R.layout.customalert);
+		
 		
 	}
 	
@@ -138,6 +141,10 @@ public class MainActivityTest extends
 		mSolo.goBack();
 	}
 	
+//	@Test
+	public void testThatScannerActivityResultProcessesGoodScan() throws Exception {
+		
+	}
 }
 
 
